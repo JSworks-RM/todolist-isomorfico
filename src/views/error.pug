@@ -1,0 +1,9 @@
+extends includes/layout.pug
+block metatags
+    title= `Error No: ${err.status}: ${err.message}`
+    meta(name="descripcion" content=description)
+block content
+    main.App
+        h1= `Error No: ${err.status}: ${err.message}`
+        div
+            pre= err.stack

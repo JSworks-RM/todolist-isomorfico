@@ -1,0 +1,17 @@
+$bg-color: steelblue;
+html {
+    font: {
+        family: sanserif;
+        size: 16px;
+    }
+
+    background-color: $bg-color;
+}
+
+*,
+*:after,
+*:before {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
