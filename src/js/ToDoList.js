@@ -10,6 +10,7 @@ export default class ToDoList  {
         if ( !ls.getItem(key) )
             ls.setItem( key, j.stringify([]) ) // Método de JSON "stringify" convierte un objeto en cadena de texto. Le pasaremos un arreglo donde guardaremos un arreglo
         this.addTask = this.addTask.bind(this)
+        this.editTask = this.editTask.bind(this)
     }
 
     // Métodos
@@ -33,13 +34,39 @@ export default class ToDoList  {
         }
     }
 
+    editTask (e) {
+        // c(e.target.localName) // La propiedad localName nos da el nombre de la etiqueta html que esta ejecutando el evento
+        if ( e.target.localName === 'label' ) {
+            let tasks = j.parse( ls.getItem(this.key) ), // Trae todas las tareas que estan en el arreglo de 'rmList 
+            // Guardando la tarea que se va a editar. A diferencia de filter que almacena en un objeto, el método findIndex() va a encontrar el indice de la tarea que compla con la condición.
+            // toEdit = tasks.filter( task => task.name === e.target.textContent ),
+            toEdit = tasks.findIndex( task => task.name === e.target.textContent ), // toEdit va a ser igual al indice de la tarea seleccionada
+        // Otro detalle es que la tarea se tiene que actualizar cuando se de manualmente un enter pero en el contenteditabel atribute del label al pulsar un enter te genera un salto de línea; Entonces tenemos que desactivar el comportamiento por default del enter y tambien se podría actualizar tarea cuando se pierda el focus, cuando vayamos de un elemento a otro.
+        // Entonces asignamos a la etiqueta label dos manejadores de eventos. Uno en el blur y otro en el keyup y la etiqueta label va a ser el selector que cumpla la condición del data-id que sea igual al de esa tarea. task.name === e.target.textContent
+        label = d.querySelector(`[data-id="${tasks[toEdit].id}"]`)
+
+        c(tasks, toEdit, label)
+
+        const saveTask = e => {
+            e.target.textContent = e.target.textContent  // Contenido textual del elemento
+            tasks[toEdit].name = e.target.textContent
+            ls.setItem( this.key, j.stringify(tasks) )  // Cada cambio al localStorage tenemos que salvarlo y lo pasamos por transformación cadena de texto la tarea.
+            e.target.blur() // Cuando termine de salvar quitamos del elemento el focus con el metodo blur
+        }
+
+        label.addEventListener( 'blur', e => saveTask(e) ) // Cuando pierda el foco pasa el método del evento
+        label.addEventListener( 'keyup', e => ( e.keyCode === ENTER_KEY ) && saveTask(e) ) // Cuando sea igual al ENTER_KEY pasa el método del evento
+        }
+
+    }
+
     // Rendirizando lista de tareas en el HTML
     renderTask(task) {
         let templateTask = `
             <li class="List-item ${ task.isComplete ? 'complete' : '' }">
                 <input type="checkbox" id="${task.id}" class="List-checkbox ${ task.isComplete ? 'complete' : '' }" />
                 <label data-id="${task.id}" class="List-label" contenteditable spellcheck>${task.name}</label>
-                <a href="#" data-id="${task.id}" class="List-removeLink">x</a>
+                <a href="#" data-id="${task.id}" class="List-removeLink"> x </a>
 
             </li>
         `
@@ -53,6 +80,9 @@ export default class ToDoList  {
         tasks.forEach( task => this.renderTask(task) )
 
         task.addEventListener('keyup', this.addTask)
+
+        // DElegando a método editTask el click de la lista
+        list.addEventListener('click', this.editTask)
     } 
 
 }
