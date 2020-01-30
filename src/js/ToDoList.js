@@ -11,6 +11,7 @@ export default class ToDoList  {
             ls.setItem( key, j.stringify([]) ) // Método de JSON "stringify" convierte un objeto en cadena de texto. Le pasaremos un arreglo donde guardaremos un arreglo
         this.addTask = this.addTask.bind(this)
         this.editTask = this.editTask.bind(this)
+        this.removeTask = this.removeTask.bind(this)
     }
 
     // Métodos
@@ -60,6 +61,20 @@ export default class ToDoList  {
 
     }
 
+    // Remove
+    removeTask (e) {
+        if ( e.target.localName === 'a' ) {
+            let tasks = j.parse( ls.getItem( this.key )),
+            toRemove = tasks.findIndex( task => task.id.toString() === e.target.dataset.id )
+            // c(tasks, toRemove)
+            tasks.splice(toRemove, 1)
+            ls.setItem(this.key, j.stringify(tasks))
+            e.target.parentElement.remove()
+        }
+    }
+
+
+
     // Rendirizando lista de tareas en el HTML
     renderTask(task) {
         let templateTask = `
@@ -81,8 +96,11 @@ export default class ToDoList  {
 
         task.addEventListener('keyup', this.addTask)
 
-        // DElegando a método editTask el click de la lista
+        // Delegando a método editTask el click de la lista
         list.addEventListener('click', this.editTask)
+
+        // Evento remove
+        list.addEventListener('click', this.removeTask)
     } 
 
 }
