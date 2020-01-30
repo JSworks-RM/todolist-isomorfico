@@ -33,8 +33,25 @@ export default class ToDoList  {
         }
     }
 
-    // render se va a encargar de pintar lo necesario para generar nuesta app
+    // Rendirizando lista de tareas en el HTML
+    renderTask(task) {
+        let templateTask = `
+            <li class="List-item ${ task.isComplete ? 'complete' : '' }">
+                <input type="checkbox" id="${task.id}" class="List-checkbox ${ task.isComplete ? 'complete' : '' }" />
+                <label data-id="${task.id}" class="List-label" contenteditable spellcheck>${task.name}</label>
+                <a href="#" data-id="${task.id}" class="List-removeLink">x</a>
+
+            </li>
+        `
+        list.insertAdjacentHTML( 'beforeend', templateTask )
+    }
+
+    // Render se va a encargar de pintar lo necesario para generar nuesta app
     render () {
+        // Creamos variable local y convertimos lo que traiga el localStorage en su propiedad this.key
+        let tasks = j.parse( ls.getItem(this.key) )
+        tasks.forEach( task => this.renderTask(task) )
+
         task.addEventListener('keyup', this.addTask)
     } 
 
