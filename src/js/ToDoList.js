@@ -2,7 +2,7 @@ import { ENTER_KEY, c, d, j, ls } from './helpers'
 import Task from './Task'
 
 export default class ToDoList  {
-    constructor (key) { // SOnstructor de la llave que vamos a trabajar en el storage
+    constructor (key) { // Constructor de la llave que vamos a trabajar en el storage
         // Asignamos a la prop. key de la clase el nombre de la lista
         this.key = key
 
