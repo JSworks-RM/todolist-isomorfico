@@ -88,3 +88,12 @@ html {
     }
 }
 
+.complete {
+    order: 1;
+    background-color: lightsteelblue;
+
+    & label {
+        text-decoration: line-through;
+    }
+}
+

@@ -91,8 +91,34 @@ export default class ToDoList  {
     // Render se va a encargar de pintar lo necesario para generar nuesta app
     render () {
         // Creamos variable local y convertimos lo que traiga el localStorage en su propiedad this.key
-        let tasks = j.parse( ls.getItem(this.key) )
+        let tasks = j.parse( ls.getItem(this.key) ),
+            listTasks = list.children  // Hijos de elemento li
+            //c(tasks) // Array de onjeto de la this.key
+
         tasks.forEach( task => this.renderTask(task) )
+
+        // A cada elemento "li" le buscamos su input de type "checkbox" y le asignamos un evento que cambie cuando cambie el valor de ese input
+        // Ese event queremos que ejecute una acción pero para que no se aplique a todos los elementos, tareas, hay que aplicarle un filtro para cuando el id de la tarea sea igual al id del elemento
+        // forEach no es una function de listTasks. Todos los elementos que vienen de selectores como querySelector, getElementByTagName, etc... Cuando los imprimimos en consola tienen el aspecto, apariencia de arreglos, pero en realidad es un html colection,es decir, son nodos, nodos de listas, nodos de elementos de html. Entonces no son arreglos.
+        // A estos nodos para convertirlos en arreglo, entre una de las opciones sería aplicarle un casting indicando.
+        // Array.from(nodo) A este nodo de lista queremos que le herede todas las características que tiene un arreglo y asi podemos usar todos estos métodos funcionales: filter, forEach, map, reduce, findIndex etc...
+        Array.from(listTasks).forEach(li => {
+            li.querySelector('input[type="checkbox"]').addEventListener('change', e => {
+                let task  = tasks.filter(task => task.id.toString() === e.target.id) // El checkbox es el único elemento que tiene id, el label y enlace tienen atributo data-id
+                c(task)
+
+                if ( e.target.checked ) {
+                    e.target.parentElement.classList.add('complete')
+                    task[0].isComplete = true
+                } else {
+                    e.target.parentElement.classList.remove('complete')
+                    task[0].isComplete = false
+                }
+
+                // Actualizamos storage
+                ls.setItem(this.key, j.stringify(tasks))
+            })
+        })
 
         task.addEventListener('keyup', this.addTask)
 
